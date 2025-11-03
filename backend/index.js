@@ -149,6 +149,63 @@ app.get('/api/test-ai', async (req, res) => {
   }
 });
 
+// ------------------------------
+// 🔹 Analyze user sessions with Flask AI
+// ------------------------------
+app.get('/api/user/:uid/analyze-sessions', async (req, res) => {
+  try {
+    const uid = req.params.uid;
+
+    // Fetch sessions from Firestore
+    const snapshot = await db.collection('users').doc(uid).collection('sessions').get();
+    const sessions = snapshot.docs.map(doc => doc.data());
+
+    if (!sessions.length) {
+      return res.json({ message: 'No session data found for this user' });
+    }
+
+    // Send sessions to Flask AI service for analysis
+    const peakRes = await axios.post('http://localhost:5000/predict_peak_hours', { sessions });
+    const energyRes = await axios.post('http://localhost:5000/energy_pattern', { sessions });
+
+    res.json({
+      message: 'AI insights generated successfully 🚀',
+      peak_hours: peakRes.data,
+      energy_pattern: energyRes.data
+    });
+
+  } catch (error) {
+    console.error('AI Analysis Error:', error.message);
+    res.status(500).json({
+      message: 'Failed to generate AI insights ❌',
+      error: error.message
+    });
+  }
+});
+
+app.post('/api/ai-insights', async (req, res) => {
+  try {
+    const { sessions } = req.body;
+    if (!sessions || sessions.length === 0) {
+      return res.json({ message: "No session data" });
+    }
+
+    // Call Flask AI Service
+    const aiResponse = await axios.post('http://localhost:5000/predict_peak_hours', { sessions });
+    const energyResponse = await axios.post('http://localhost:5000/energy_pattern', { sessions });
+
+    res.json({
+      peak_hours: aiResponse.data.peak_hours,
+      median_focus_minutes: aiResponse.data.median_focus_minutes,
+      recommended_break_after_min: aiResponse.data.recommended_break_after_min,
+      energy: energyResponse.data,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: "AI service failed" });
+  }
+});
+
 
 // =====================================
 // 🔹 4. SERVER START
