@@ -13,7 +13,7 @@ function App(){
   return (
     <BrowserRouter>
       <div style={{display:"flex", minHeight:"100vh"}}>
-        <Sidebar />
+        
         <div style={{flex:1, padding:20}}>
           <Routes>
             <Route path="/" element={<Login />} />

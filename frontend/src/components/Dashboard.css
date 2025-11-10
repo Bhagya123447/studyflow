@@ -1,0 +1,243 @@
+/* Basic Resets and Body Styling */
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8f8f8; /* Light background for the whole page */
+    color: #333;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+}
+
+/* Sidebar Styling */
+/* Assuming Sidebar component renders a div with a class like 'sidebar' or similar */
+.sidebar {
+    width: 250px; /* Fixed width for the sidebar */
+    background-color: #ffffff; /* White background for sidebar */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05); /* Subtle shadow */
+    padding: 20px 0;
+    position: fixed; /* Keep sidebar fixed on scroll */
+    height: 100vh; /* Full height */
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes AI assistant to bottom */
+}
+
+.sidebar-header {
+    padding: 0 20px 20px 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin-bottom: 5px;
+}
+
+.sidebar-nav a {
+    display: flex; /* For icon and text alignment */
+    align-items: center;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #555;
+    font-size: 16px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: 8px; /* Slightly rounded corners */
+    margin: 0 10px;
+}
+
+.sidebar-nav a:hover {
+    background-color: #eef;
+    color: #007bff;
+}
+
+.sidebar-nav a.active { /* Style for the currently active link (e.g., Dashboard) */
+    background-color: #e0f0ff; /* Lighter blue for active state */
+    color: #007bff; /* Primary blue color */
+    font-weight: bold;
+}
+
+.sidebar-nav a .icon { /* Style for icons within sidebar links */
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    font-size: 14px;
+    color: #aaa;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+/* Dashboard Content Styling (Main Area) */
+/* The main content div already has inline styles for flex layout */
+/* The key metric cards already have inline styles */
+
+h1, h2 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+p {
+    line-height: 1.5;
+}
+
+/* You might want to add styles for FocusSession, TodayTasks, AIBlocks */
+/* For example: */
+.focus-session-card,
+.today-tasks-section,
+.ai-blocks-section {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 20px; /* Space between sections */
+}
+
+/* Specific styling for the AI-Powered Study Assistant text at the bottom-left of the main content */
+.ai-powered-assistant-text {
+    color: #aaa;
+    font-size: 14px;
+    margin-top: 50px;
+    text-align: left;
+    padding-left: 40px; /* Align with the main content start */
+}
+
+/* ... (previous Dashboard.css content) ... */
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    background-color: #f8f8f8;
+    min-height: 100vh;
+}
+
+/* Dashboard Content Area */
+.dashboard-content {
+    flex-grow: 1;
+    padding: 20px 40px;
+    margin-left: 250px; /* Should match sidebar width */
+}
+
+/* Top Right Controls */
+.top-right-controls {
+    display: flex;
+    justify-content: flex-end; /* Pushes content to the right */
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.theme-toggle-icon {
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Headers */
+.welcome-header {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.welcome-subheader {
+    color: #666;
+    margin-bottom: 40px;
+    font-size: 18px;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.metric-card {
+    padding: 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.metric-title {
+    font-size: 18px;
+    color: #555;
+    margin: 0; /* Reset default margin for h3 */
+}
+
+.metric-icon {
+    font-size: 20px;
+    color: #888;
+}
+
+.metric-value {
+    font-size: 42px;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+}
+
+.metric-change {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.metric-change.positive {
+    color: #28a745; /* Green for positive change */
+}
+
+/* Focus Session Section */
+.focus-session-section {
+    display: flex; 
+    justify-content: center; 
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 20px;
+    width: 500; 
+    margin: 0 auto 40px auto;
+}
+
+/* Today Tasks and AI Blocks sections */
+.today-tasks-section,
+.ai-blocks-section {
+    /* These might need specific styles depending on their content */
+    margin-bottom: 20px;
+}

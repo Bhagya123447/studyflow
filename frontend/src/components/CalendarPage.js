@@ -10,7 +10,6 @@ const CalendarPage = () => {
     { id: "2", title: "Firebase Integration", date: "2025-10-30" },
   ]);
 
-  // handle date click to add event
   const handleDateClick = (info) => {
     const title = prompt("Enter event title:");
     if (title) {
@@ -18,7 +17,6 @@ const CalendarPage = () => {
     }
   };
 
-  // handle event click to delete
   const handleEventClick = (info) => {
     if (window.confirm(`Delete event '${info.event.title}'?`)) {
       setEvents(events.filter((e) => e.id !== info.event.id));
@@ -29,14 +27,13 @@ const CalendarPage = () => {
     <div className="p-6 text-gray-800">
       <h1 className="text-2xl font-semibold mb-4">📅 Study Calendar</h1>
       <p className="text-gray-600 mb-4">
-        Plan your study sessions, project work, and reminders here.
+        Plan your study sessions and track your productive days.
       </p>
 
       <div className="bg-white border rounded-2xl shadow-md p-4">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          editable={true}
           selectable={true}
           dateClick={handleDateClick}
           eventClick={handleEventClick}
