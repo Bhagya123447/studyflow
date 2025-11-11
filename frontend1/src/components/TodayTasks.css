@@ -1,0 +1,170 @@
+/* src/components/TodayTasks.css */
+
+/* Define CSS Variables for theming/consistency */
+:root {
+    --primary-color: #1890ff;
+    --primary-light-color: #e6f7ff;
+    --text-color-primary: #333;
+    --text-color-secondary: #555;
+    --text-color-light: #777;
+    --card-background-color: white;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    --border-color: #e0e0e0;
+
+    --difficulty-high: #dc3545; /* Red */
+    --difficulty-medium: #ffc107; /* Orange/Yellow */
+    --difficulty-low: #28a745; /* Green */
+}
+
+.today-tasks-container {
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.loading-message,
+.error-message,
+.no-tasks-message {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 1.1em;
+    color: var(--text-color-secondary);
+    background-color: var(--card-background-color);
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.error-message {
+    color: var(--difficulty-high); /* Red for errors */
+    background-color: #ffebee;
+}
+
+.tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.tasks-title {
+    margin: 0;
+    font-size: 26px; /* Larger title */
+    color: var(--text-color-primary);
+    font-weight: 600;
+}
+
+.add-task-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px; /* Slightly more rounded */
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3); /* Subtle shadow */
+}
+
+.add-task-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-1px); /* Slight lift */
+}
+
+.add-task-icon {
+    font-size: 22px; /* Larger icon */
+    margin-right: 8px;
+    line-height: 1; /* Align vertically */
+}
+
+.tasks-list {
+    margin-top: 20px;
+}
+
+.task-card {
+    background-color: var(--card-background-color);
+    border-radius: 10px; /* Slightly more rounded */
+    box-shadow: var(--card-shadow);
+    padding: 18px; /* Increased padding */
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    border-left: 5px solid; /* Defined by inline style based on difficulty */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.task-completed {
+    opacity: 0.7; /* Dim completed tasks */
+    text-decoration: line-through;
+}
+
+.task-checkbox {
+    margin-right: 15px;
+    margin-top: 5px; /* Align with text */
+    transform: scale(1.3); /* Slightly larger checkbox */
+    cursor: pointer;
+    accent-color: var(--primary-color); /* Color of checkbox when checked */
+}
+
+.task-details {
+    flex-grow: 1;
+}
+
+.task-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.task-title {
+    font-size: 19px; /* Slightly larger title */
+    color: var(--text-color-primary);
+    font-weight: 600;
+}
+
+.task-difficulty {
+    border-radius: 18px; /* More rounded pill shape */
+    padding: 5px 15px; /* Increased padding */
+    font-size: 13px; /* Slightly larger font */
+    font-weight: bold;
+    color: white;
+    /* Background colors defined dynamically based on prop */
+}
+
+/* Specific difficulty styles for background colors */
+.task-difficulty.high { background-color: var(--difficulty-high); }
+.task-difficulty.medium { background-color: var(--difficulty-medium); }
+.task-difficulty.low { background-color: var(--difficulty-low); }
+
+
+.task-description {
+    font-size: 15px;
+    color: var(--text-color-secondary);
+    margin-top: 5px;
+    line-height: 1.5;
+}
+
+.task-meta {
+    font-size: 13px; /* Slightly larger meta info */
+    color: var(--text-color-light);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.task-meta span {
+    margin-right: 20px; /* More space between meta items */
+    display: flex;
+    align-items: center;
+}
+
+.task-meta span::before {
+    margin-right: 5px;
+}

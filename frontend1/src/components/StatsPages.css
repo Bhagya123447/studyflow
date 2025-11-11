@@ -1,0 +1,96 @@
+/* src/components/StatsPage.css */
+
+.stats-page-container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color-primary, #333);
+}
+
+.loading-message,
+.error-message,
+.no-stats-message {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1.1em;
+    color: var(--text-color-secondary, #666);
+    background-color: var(--card-background-color, #f9f9f9);
+    border-radius: 12px;
+    margin-top: 50px;
+    box-shadow: var(--card-shadow, 0 2px 5px rgba(0,0,0,0.05));
+}
+
+.error-message {
+    color: var(--error-color, #d32f2f);
+    background-color: var(--error-background-color, #ffebee);
+}
+
+.stats-header {
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--primary-color, #1890ff);
+    text-align: center;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Adjusted for better spacing */
+    gap: 25px;
+}
+
+.stats-card {
+    background-color: var(--card-background-color, white);
+    box-shadow: var(--card-shadow, 0 4px 10px rgba(0,0,0,0.08));
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex; /* Make it a flex container */
+    flex-direction: column; /* Stack children vertically */
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow, 0 6px 15px rgba(0,0,0,0.12));
+}
+
+.stats-card.full-width {
+    grid-column: 1 / -1; /* Spans full width for larger charts */
+}
+
+.stats-card-title {
+    font-size: 1.4em;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-color-primary, #333);
+    text-align: center;
+}
+
+/* Recharts specific styling */
+/* The next block was removed: .recharts-wrapper .recharts-surface {} */
+
+.recharts-tooltip-wrapper {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid var(--border-color, #ddd) !important;
+    border-radius: 8px !important;
+    padding: 10px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+}
+
+.recharts-tooltip-label {
+    font-weight: 600;
+    color: var(--text-color-primary, #333);
+    margin-bottom: 5px;
+}
+
+.recharts-tooltip-item-list .recharts-tooltip-item {
+    font-size: 0.9em;
+    color: var(--text-color-secondary, #555);
+}
+
+/* Customize specific bar/line colors if needed directly here or via CSS variables */
+.recharts-bar-rectangle.recharts-tooltip-cursor {
+    fill: var(--primary-color-light-hover, rgba(99, 102, 241, 0.1)) !important; /* Slightly lighter hover */
+}

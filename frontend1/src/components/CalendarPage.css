@@ -1,0 +1,100 @@
+/* src/components/CalendarPage.css */
+
+.calendar-page-container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color-primary, #333);
+}
+
+.calendar-loading-message,
+.calendar-error-message {
+    text-align: center;
+    padding: 40px 20px;
+    font-size: 1.1em;
+    color: var(--text-color-secondary, #666);
+    background-color: var(--card-background-color, #f9f9f9);
+    border-radius: 12px;
+    margin-top: 50px;
+    box-shadow: var(--card-shadow, 0 2px 5px rgba(0,0,0,0.05));
+}
+
+.calendar-error-message {
+    color: var(--error-color, #d32f2f);
+    background-color: var(--error-background-color, #ffebee);
+}
+
+.calendar-error-subtext {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--text-color-light, #999);
+    font-size: 0.95em;
+}
+
+.calendar-header {
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--primary-color, #1890ff);
+    text-align: center;
+}
+
+.calendar-subheader {
+    font-size: 1.1em;
+    color: var(--text-color-secondary, #666);
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.calendar-wrapper {
+    background-color: var(--card-background-color, white);
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 15px;
+    box-shadow: var(--card-shadow, 0 4px 10px rgba(0,0,0,0.08));
+    padding: 20px;
+}
+
+/* FullCalendar Specific Styles (You might already have these, but if not, here are basics) */
+.fc .fc-toolbar-title {
+    font-size: 1.8em; /* Make title bigger */
+    font-weight: 600;
+    color: var(--text-color-primary, #333);
+}
+
+.fc .fc-button {
+    background-color: var(--primary-color, #1890ff);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+}
+
+.fc .fc-button:hover {
+    background-color: var(--primary-color-dark, #0056b3);
+}
+
+.fc .fc-button:focus {
+    box-shadow: none;
+}
+
+.fc-daygrid-event {
+    background-color: var(--event-color, #4CAF50); /* Green for events */
+    border-color: var(--event-color-dark, #388E3C);
+    color: white;
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.fc-daygrid-event.fc-event-mirror { /* For drag/drop placeholder */
+    opacity: 0.7;
+}
+
+/* Day cell with more work - this is a custom class you'd apply if you had data */
+.fc-day-more-work {
+    background-color: var(--highlight-day-color, #e6ffe6); /* Lighter green background */
+}
