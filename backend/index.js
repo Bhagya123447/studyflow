@@ -4,6 +4,8 @@ const axios = require("axios");
 const cors = require("cors");
 
 const app = express();
+
+const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
@@ -49,6 +51,15 @@ app.post("/api/user/:uid/sessions", async (req, res) => {
   }
 });
 
+app.delete("/api/user/:uid/sessions/:sessionId", async (req, res) => {
+  try {
+    const { uid, sessionId } = req.params;
+    await db.collection("users").doc(uid).collection("sessions").doc(sessionId).delete();
+    res.json({ success: true, id: sessionId });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // =====================================
 // 🔹 2. TASKS (Firebase CRUD)
@@ -210,5 +221,5 @@ app.post('/api/ai-insights', async (req, res) => {
 // =====================================
 // 🔹 4. SERVER START
 // =====================================
-const PORT = 4000;
+
 app.listen(PORT, () => console.log(`🚀 Backend running on http://localhost:${PORT}`));

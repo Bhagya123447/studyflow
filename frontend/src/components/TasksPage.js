@@ -1,7 +1,10 @@
+// src/components/TasksPage.js
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase";
-import { collection, addDoc, query, where, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, query, onSnapshot, doc, updateDoc, deleteDoc } from "firebase/firestore"; // Import deleteDoc
 import { getAuth } from "firebase/auth";
+import { PlusCircle, Edit, Trash2, CheckCircle, Circle } from 'lucide-react'; // Example icons
+import './TasksPage.css';
 
 const TasksPage = () => {
   const auth = getAuth();
@@ -10,6 +13,7 @@ const TasksPage = () => {
   const [priorityFilter, setPriorityFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [showForm, setShowForm] = useState(false);
+  const [editingTask, setEditingTask] = useState(null); // State to hold task being edited
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -18,25 +22,109 @@ const TasksPage = () => {
     duration: "",
     status: "Pending",
   });
+  const [loadingTasks, setLoadingTasks] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch tasks from Firestore
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoadingTasks(false);
+      return;
+    }
     const q = query(collection(db, "users", user.uid, "tasks"));
-    const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setTasks(data);
-    });
+    const unsub = onSnapshot(
+      q,
+      (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setTasks(data);
+        setLoadingTasks(false);
+      },
+      (err) => {
+        console.error("Error fetching tasks:", err);
+        setError("Failed to load tasks. Please try again.");
+        setLoadingTasks(false);
+      }
+    );
     return () => unsub();
   }, [user]);
 
-  // Add a new task
-  const addTask = async (e) => {
+  // Handle form input changes
+  const handleNewTaskChange = (e) => {
+    const { name, value } = e.target;
+    setNewTask((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Add or Update a task
+  const handleSubmitTask = async (e) => {
     e.preventDefault();
-    if (!user) return alert("Login first!");
-    await addDoc(collection(db, "users", user.uid, "tasks"), newTask);
-    setShowForm(false);
-    setNewTask({ title: "", description: "", priority: "Medium", date: "", duration: "", status: "Pending" });
+    if (!user) {
+      alert("Login first to add tasks!");
+      return;
+    }
+
+    try {
+      if (editingTask) {
+        // Update existing task
+        const taskDocRef = doc(db, "users", user.uid, "tasks", editingTask.id);
+        await updateDoc(taskDocRef, newTask);
+        setEditingTask(null); // Clear editing state
+      } else {
+        // Add new task
+        await addDoc(collection(db, "users", user.uid, "tasks"), { ...newTask, userId: user.uid });
+      }
+      setShowForm(false);
+      setNewTask({ title: "", description: "", priority: "Medium", date: "", duration: "", status: "Pending" });
+    } catch (err) {
+      console.error("Error saving task:", err);
+      alert("Failed to save task. Please try again.");
+    }
+  };
+
+  // Update task status
+  const updateTaskStatus = async (taskId, currentStatus) => {
+    if (!user) {
+      alert("Login first!");
+      return;
+    }
+    const newStatus = currentStatus === "Completed" ? "Pending" : "Completed";
+    const taskDocRef = doc(db, "users", user.uid, "tasks", taskId);
+    try {
+      await updateDoc(taskDocRef, { status: newStatus });
+    } catch (err) {
+      console.error("Error updating task status:", err);
+      alert("Failed to update task status.");
+    }
+  };
+
+  // Delete a task
+  const deleteTask = async (taskId) => {
+    if (!user) {
+      alert("Login first!");
+      return;
+    }
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      try {
+        const taskDocRef = doc(db, "users", user.uid, "tasks", taskId);
+        await deleteDoc(taskDocRef);
+      } catch (err) {
+        console.error("Error deleting task:", err);
+        alert("Failed to delete task. Please try again.");
+      }
+    }
+  };
+
+  // Start editing a task
+  const startEditTask = (task) => {
+    setEditingTask(task);
+    setNewTask({
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      date: task.date,
+      duration: task.duration,
+      status: task.status,
+    });
+    setShowForm(true);
   };
 
   // Filter logic
@@ -46,112 +134,151 @@ const TasksPage = () => {
     return priorityOk && statusOk;
   });
 
-  const priorityColors = {
-    High: "bg-red-100 text-red-700",
-    Medium: "bg-blue-100 text-blue-700",
-    Low: "bg-green-100 text-green-700",
+  const getPriorityClass = (priority) => {
+    switch (priority) {
+      case "High": return "priority-high";
+      case "Medium": return "priority-medium";
+      case "Low": return "priority-low";
+      default: return "";
+    }
   };
 
+  if (!user) {
+    return <div className="no-user-message">Please log in to manage your tasks.</div>;
+  }
+
+  if (loadingTasks) {
+    return <div className="loading-message">Loading tasks...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
   return (
-    <div className="p-8 text-gray-800">
-      <div className="flex items-center justify-between mb-6">
+    <div className="tasks-page-container">
+      <div className="tasks-header-section">
         <div>
-          <h1 className="text-3xl font-semibold">Tasks</h1>
-          <p className="text-gray-500">Manage your study tasks and goals</p>
+          <h1 className="tasks-header-title">Tasks</h1>
+          <p className="tasks-header-subtitle">Manage your study tasks and goals</p>
         </div>
         <button
-          onClick={() => setShowForm(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+          onClick={() => {
+            setEditingTask(null); // Clear editing state when opening for new task
+            setNewTask({ title: "", description: "", priority: "Medium", date: "", duration: "", status: "Pending" });
+            setShowForm(true);
+          }}
+          className="add-task-button"
         >
-          + Add Task
+          <PlusCircle size={18} style={{ marginRight: '8px' }} /> Add Task
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4 mb-6">
-        <select
-          value={priorityFilter}
-          onChange={(e) => setPriorityFilter(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-2"
-        >
-          <option>All</option>
-          <option>High</option>
-          <option>Medium</option>
-          <option>Low</option>
-        </select>
+      <div className="tasks-filters">
+        <div className="filter-dropdown">
+          <label htmlFor="priority-filter" className="sr-only">Priority Filter</label>
+          <select
+            id="priority-filter"
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option>All</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
 
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-2"
-        >
-          <option>All</option>
-          <option>Pending</option>
-          <option>Completed</option>
-        </select>
+        <div className="filter-dropdown">
+          <label htmlFor="status-filter" className="sr-only">Status Filter</label>
+          <select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option>All</option>
+            <option>Pending</option>
+            <option>Completed</option>
+          </select>
+        </div>
       </div>
 
       {/* Task List */}
-      <div className="grid gap-4">
-        {filteredTasks.map((task) => (
-          <div
-            key={task.id}
-            className="flex justify-between items-center bg-white shadow-md rounded-lg p-4 border hover:shadow-lg transition"
-          >
-            <div>
-              <h3 className="text-lg font-semibold">{task.title}</h3>
-              <p className="text-gray-600 text-sm">{task.description}</p>
-              <div className="text-gray-500 text-sm mt-1">
-                📅 {task.date || "No date"} • ⏱ {task.duration || "N/A"} min
+      <div className="tasks-list">
+        {filteredTasks.length === 0 ? (
+          <div className="no-tasks-message">No tasks found. Add a new task to get started!</div>
+        ) : (
+          filteredTasks.map((task) => (
+            <div
+              key={task.id}
+              className="task-card"
+            >
+              <div className="task-main-content">
+                <input
+                  type="checkbox"
+                  checked={task.status === "Completed"}
+                  onChange={() => updateTaskStatus(task.id, task.status)}
+                  className="task-checkbox"
+                />
+                <div>
+                  <h3 className={`task-title ${task.status === "Completed" ? "completed-task-title" : ""}`}>
+                    {task.title}
+                  </h3>
+                  <p className="task-description">{task.description}</p>
+                  <div className="task-meta">
+                    {task.date && `📅 ${task.date}`}
+                    {task.date && task.duration && " • "}
+                    {task.duration && `⏱ ${task.duration} min`}
+                  </div>
+                </div>
+              </div>
+              <div className="task-actions">
+                <span className={`task-priority-tag ${getPriorityClass(task.priority)}`}>
+                  {task.priority}
+                </span>
+                <button onClick={() => startEditTask(task)} className="task-action-button" title="Edit Task">
+                  <Edit size={18} />
+                </button>
+                <button onClick={() => deleteTask(task.id)} className="task-action-button delete-button" title="Delete Task">
+                  <Trash2 size={18} />
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium ${priorityColors[task.priority]}`}>
-                {task.priority}
-              </span>
-              <input
-                type="checkbox"
-                checked={task.status === "Completed"}
-                onChange={() => {
-                  const newStatus = task.status === "Completed" ? "Pending" : "Completed";
-                  const docRef = collection(db, "users", user.uid, "tasks");
-                  fetch(`https://firestore.googleapis.com/v1/projects/${db.app.options.projectId}/databases/(default)/documents/users/${user.uid}/tasks/${task.id}?updateMask.fieldPaths=status`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ fields: { status: { stringValue: newStatus } } }),
-                  });
-                }}
-              />
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
-      {/* Add Task Modal */}
+      {/* Add/Edit Task Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h2 className="text-xl font-semibold mb-4">Add Task</h2>
-            <form onSubmit={addTask} className="space-y-3">
+        <div className="task-form-modal-overlay">
+          <div className="task-form-modal-content">
+            <h2 className="task-form-modal-title">{editingTask ? "Edit Task" : "Add New Task"}</h2>
+            <form onSubmit={handleSubmitTask} className="task-form">
               <input
                 type="text"
+                name="title"
                 placeholder="Task title"
                 value={newTask.title}
-                onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                className="w-full border px-3 py-2 rounded-md"
+                onChange={handleNewTaskChange}
+                className="task-form-input"
                 required
               />
               <textarea
+                name="description"
                 placeholder="Description"
                 value={newTask.description}
-                onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                className="w-full border px-3 py-2 rounded-md"
+                onChange={handleNewTaskChange}
+                className="task-form-textarea"
               />
-              <div className="flex gap-2">
+              <div className="task-form-row">
                 <select
+                  name="priority"
                   value={newTask.priority}
-                  onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-                  className="border px-2 py-1 rounded-md w-1/2"
+                  onChange={handleNewTaskChange}
+                  className="task-form-select"
                 >
                   <option>High</option>
                   <option>Medium</option>
@@ -159,28 +286,44 @@ const TasksPage = () => {
                 </select>
                 <input
                   type="date"
+                  name="date"
                   value={newTask.date}
-                  onChange={(e) => setNewTask({ ...newTask, date: e.target.value })}
-                  className="border px-2 py-1 rounded-md w-1/2"
+                  onChange={handleNewTaskChange}
+                  className="task-form-input"
                 />
               </div>
               <input
                 type="number"
+                name="duration"
                 placeholder="Duration (min)"
                 value={newTask.duration}
-                onChange={(e) => setNewTask({ ...newTask, duration: e.target.value })}
-                className="w-full border px-3 py-2 rounded-md"
+                onChange={handleNewTaskChange}
+                className="task-form-input"
               />
-              <div className="flex justify-end gap-2 pt-3">
+              {editingTask && (
+                 <div className="task-form-row">
+                    <label className="task-form-label">Status:</label>
+                    <select
+                        name="status"
+                        value={newTask.status}
+                        onChange={handleNewTaskChange}
+                        className="task-form-select"
+                    >
+                        <option>Pending</option>
+                        <option>Completed</option>
+                    </select>
+                 </div>
+              )}
+              <div className="task-form-actions">
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="px-4 py-2 rounded-md border border-gray-300"
+                  className="task-form-button cancel-button"
                 >
                   Cancel
                 </button>
-                <button type="submit" className="px-4 py-2 rounded-md bg-indigo-600 text-white">
-                  Save
+                <button type="submit" className="task-form-button save-button">
+                  {editingTask ? "Update Task" : "Save Task"}
                 </button>
               </div>
             </form>

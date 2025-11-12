@@ -15,80 +15,6 @@ code {
       monospace;
 }
 
-/* Sidebar Styling */
-/* Assuming Sidebar component renders a div with a class like 'sidebar' or similar */
-.sidebar {
-    width: 250px; /* Fixed width for the sidebar */
-    background-color: #ffffff; /* White background for sidebar */
-    box-shadow: 2px 0 5px rgba(0,0,0,0.05); /* Subtle shadow */
-    padding: 20px 0;
-    position: fixed; /* Keep sidebar fixed on scroll */
-    height: 100vh; /* Full height */
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Pushes AI assistant to bottom */
-}
-
-.sidebar-header {
-    padding: 0 20px 20px 20px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    border-bottom: 1px solid #eee;
-}
-
-.sidebar-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.sidebar-nav li {
-    margin-bottom: 5px;
-}
-
-.sidebar-nav a {
-    display: flex; /* For icon and text alignment */
-    align-items: center;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: #555;
-    font-size: 16px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    border-radius: 8px; /* Slightly rounded corners */
-    margin: 0 10px;
-}
-
-.sidebar-nav a:hover {
-    background-color: #eef;
-    color: #007bff;
-}
-
-.sidebar-nav a.active { /* Style for the currently active link (e.g., Dashboard) */
-    background-color: #e0f0ff; /* Lighter blue for active state */
-    color: #007bff; /* Primary blue color */
-    font-weight: bold;
-}
-
-.sidebar-nav a .icon { /* Style for icons within sidebar links */
-    margin-right: 10px;
-    font-size: 20px;
-}
-
-.sidebar-footer {
-    padding: 20px;
-    font-size: 14px;
-    color: #aaa;
-    border-top: 1px solid #eee;
-    text-align: center;
-}
-
-/* Dashboard Content Styling (Main Area) */
-/* The main content div already has inline styles for flex layout */
-/* The key metric cards already have inline styles */
-
 h1, h2 {
     color: #333;
     margin-bottom: 15px;
@@ -123,16 +49,15 @@ p {
 
 /* Dashboard Container */
 .dashboard-container {
-    display: flex;
-    background-color: #f8f8f8;
-    min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
 }
 
-/* Dashboard Content Area */
 .dashboard-content {
-    flex-grow: 1;
-    padding: 20px 40px;
-    margin-left: 250px; /* Should match sidebar width */
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px 40px;
 }
 
 /* Top Right Controls */

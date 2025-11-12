@@ -1,49 +1,80 @@
+// src/components/AIBlocks.js
 import React from "react";
+import './AIBlocks.css'; // Dedicated CSS for AIBlocks
 
-export default function AIBlocks() {
+// Helper function to format peak hours
+const formatPeakHours = (peakHours) => {
+  if (!peakHours || peakHours.length === 0) {
+    return "No consistent peak focus time detected yet.";
+  }
+  const sortedHours = peakHours.sort((a, b) => b.minutes - a.minutes);
+  const topHour = sortedHours[0];
+  const nextHours = sortedHours.slice(1, 3); // Get next two for a range if desired
+
+  let description = `Your highest focus is often around ${topHour.hour}:00 - ${topHour.hour + 1}:00.`;
+  if (nextHours.length > 0) {
+    const hoursText = nextHours.map(h => `${h.hour}:00`).join(', ');
+    description += ` Other strong periods include ${hoursText}.`;
+  }
+  description += " Consider scheduling important tasks during these times.";
+  return description;
+};
+
+// Helper function for energy pattern
+const formatEnergyPattern = (energyPattern, recommendedBreak) => {
+    if (!energyPattern || energyPattern.message === "no data") {
+        return `We need more session data to analyze your energy pattern. Keep studying!`;
+    }
+    const median = energyPattern.median || recommendedBreak; // Use recommendedBreak if median is 0 or undefined
+    const suggestion = energyPattern.suggestion || `Try taking a ${recommendedBreak}-minute break every ${median} minutes to maintain optimal focus.`;
+    return `You tend to focus for about ${median} minutes per session. ${suggestion}`;
+};
+
+
+export default function AIBlocks({ peakHours, energyPattern, recommendedBreak }) {
+  // Define insight blocks based on the data received as props
   const blocks = [
     {
-      title: "Peak Focus Time Detected",
-      desc: "Your focus score is highest between 9 AM - 11 AM. Consider scheduling important tasks during this window.",
+      title: "Focus Optimization",
+      // Use the helper function to create a dynamic description for peak hours
+      desc: formatPeakHours(peakHours),
       button: "Adjust Schedule",
+      icon: "💡",
     },
     {
-      title: "Study Session Recommendation",
-      desc: "Based on your progress, consider taking a 15-minute break every 90 minutes to maintain optimal focus.",
+      title: "Energy Pattern Analysis",
+      // Use the helper function for dynamic energy pattern description
+      desc: formatEnergyPattern(energyPattern, recommendedBreak),
       button: "Learn More",
+      icon: "⚡",
     },
     {
-      title: "Topic Review Suggestion",
-      desc: "You haven't reviewed React in a while. It's recommended to revisit this topic soon to reinforce your understanding.",
-      button: "Review Now", // Assuming a button here for consistency
+      title: "Recommended Break",
+      desc: `Based on your focus patterns, a ${recommendedBreak}-minute break is recommended after each study session to recharge effectively.`,
+      button: "Customize Settings",
+      icon: "☕",
     },
     {
-      title: "Weekly Goal Progress",
-      desc: "You're 80% towards your weekly study goal! Keep up the great work!",
-      button: "View Details", // Assuming a button here for consistency
+      title: "Study Habit Insight",
+      // This block could combine other insights or prompt for more data.
+      // For now, a placeholder if other complex AI insights are not ready.
+      desc: "We're constantly learning from your study habits to provide more personalized recommendations. Keep logging your sessions!",
+      button: "View All Insights",
+      icon: "🧠",
     },
   ];
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16, padding: 8, backgroundColor: "#f8f8f8" }}>
-      {blocks.map((b) => (
-        <div key={b.title} style={{ padding: 16, border: "1px solid #e0e0e0", borderRadius: 12, backgroundColor: "white", boxShadow: "0 2px 4px rgba(0,0,0,0.05)" }}>
-          <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-            {/* Placeholder for icon, you can replace with actual icons */}
-            <div style={{ width: 24, height: 24, borderRadius: "50%", backgroundColor: "#e6f7ff", display: "flex", justifyContent: "center", alignItems: "center", marginRight: 8, fontSize: 14 }}>💡</div>
-            <h4 style={{ margin: 0, fontSize: 18, color: "#333" }}>{b.title}</h4>
+    <div className="ai-blocks-grid"> {/* Use a CSS class for grid layout */}
+      {blocks.map((b, index) => (
+        <div key={index} className="ai-block-card"> {/* Use CSS classes for styling */}
+          <div className="ai-block-header">
+            <div className="ai-block-icon">{b.icon}</div>
+            <h4 className="ai-block-title">{b.title}</h4>
           </div>
-          <p style={{ fontSize: 15, color: "#666", lineHeight: 1.5, marginBottom: 16 }}>{b.desc}</p>
+          <p className="ai-block-description">{b.desc}</p>
           {b.button && (
-            <button style={{
-              background: "none",
-              border: "none",
-              color: "#1890ff",
-              fontSize: 15,
-              cursor: "pointer",
-              padding: 0,
-              textDecoration: "underline"
-            }}>
+            <button className="ai-block-button">
               {b.button}
             </button>
           )}

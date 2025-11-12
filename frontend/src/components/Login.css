@@ -1,0 +1,115 @@
+/* src/components/Login.css */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* Adjust based on header/footer if any */
+    background-color: var(--background-color-light, #f0f2f5);
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+    max-width: 400px;
+    width: 100%;
+    background-color: var(--card-background-color, white);
+    box-shadow: var(--card-shadow, 0 8px 20px rgba(0,0,0,0.1));
+    border-radius: 18px; /* Slightly more rounded */
+    padding: 40px; /* Increased padding */
+    text-align: center;
+    border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.login-header {
+    font-size: 2.2em; /* Larger header */
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--primary-color-dark, #0056b3);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-input {
+    border: 1px solid var(--border-color-light, #d1d5db);
+    background-color: var(--input-background-color, #f9fafb);
+    width: 100%;
+    padding: 12px 15px; /* Increased padding */
+    border-radius: 10px; /* More rounded input fields */
+    margin-bottom: 18px; /* Increased spacing */
+    font-size: 1.05em;
+    color: var(--text-color-primary, #333);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-input::placeholder {
+    color: var(--text-color-light, #9ca3af);
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: var(--primary-color, #1890ff);
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.2);
+}
+
+.login-button {
+    background-color: var(--primary-color, #1890ff);
+    color: white;
+    padding: 14px 20px; /* Larger button */
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    border: none;
+    margin-top: 10px;
+}
+
+.login-button:hover {
+    background-color: var(--primary-color-dark, #0056b3);
+    transform: translateY(-1px);
+}
+
+.login-message {
+    color: var(--text-color-secondary, #666);
+    margin-top: 20px;
+    font-size: 0.95em;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Specific styles for success/error messages */
+.login-message.success { /* You might add this class dynamically */
+    color: var(--success-color, #28a745);
+    background-color: var(--success-background-color, #d4edda);
+}
+
+.login-message.error { /* You might add this class dynamically */
+    color: var(--error-color, #dc3545);
+    background-color: var(--error-background-color, #f8d7da);
+}
+
+
+.login-toggle-text {
+    margin-top: 25px;
+    color: var(--text-color-secondary, #666);
+    font-size: 0.95em;
+}
+
+.login-toggle-button {
+    background: none;
+    border: none;
+    color: var(--link-color, #1890ff);
+    font-size: 1em;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.login-toggle-button:hover {
+    color: var(--link-hover-color, #40a9ff);
+}

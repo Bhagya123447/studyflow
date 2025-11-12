@@ -1,1 +1,10 @@
+# Backend
 backend/serviceAccountKey.json
+backend/node_modules/
+
+# Frontend
+frontend/node_modules/
+frontend/firebase.js
+
+# Ignore general node_modules anywhere (safe catch-all)
+node_modules/

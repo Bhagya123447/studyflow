@@ -1,155 +1,189 @@
 import React, { useState, useRef, useEffect } from "react";
+import './FocusSession.css';
 
-export default function FocusSession() {
+// ✅ Accept all props from Dashboard now
+export default function FocusSession({
+  uid,
+  recommendedBreak,
+  focusDuration = 25,
+  breakDuration = 5,
+  autoStartBreaks = false
+}) {
   const [running, setRunning] = useState(false);
-  const [seconds, setSeconds] = useState(1500); // Start at 25 minutes (25 * 60 seconds)
+  const [sessionType, setSessionType] = useState("focus");
+  const [seconds, setSeconds] = useState(0);
   const [sessionCount, setSessionCount] = useState(1);
   const timerRef = useRef(null);
-  const initialSessionDuration = 1500; // 25 minutes in seconds
+  const startTimeRef = useRef(null);
 
+  // ✅ Use durations from props (convert to seconds)
+  const initialFocusDuration = focusDuration * 60;
+  const initialBreakDuration = breakDuration * 60;
+
+  useEffect(() => {
+    if (!running) {
+      setSeconds(sessionType === "focus" ? initialFocusDuration : initialBreakDuration);
+    }
+  }, [focusDuration, breakDuration, sessionType, running]);
+
+  // Timer logic
   useEffect(() => {
     if (running && seconds > 0) {
       timerRef.current = setInterval(() => setSeconds((s) => s - 1), 1000);
-    } else if (seconds === 0) {
+    } else if (running && seconds === 0) {
       clearInterval(timerRef.current);
       setRunning(false);
-      // Optional: Play a sound or show a notification when session ends
+      handleSessionEnd();
     }
     return () => clearInterval(timerRef.current);
   }, [running, seconds]);
 
-  const format = (s) => {
+  const formatTime = (s) => {
     const mm = String(Math.floor(s / 60)).padStart(2, "0");
     const ss = String(s % 60).padStart(2, "0");
     return `${mm}:${ss}`;
   };
 
   const handleStartStop = () => {
+    if (!uid) {
+      alert("Please log in to start a focus session.");
+      return;
+    }
+
+    if (!running) {
+      if (seconds === 0 || seconds === initialFocusDuration || seconds === initialBreakDuration) {
+        startTimeRef.current = new Date().toISOString();
+      }
+    } else {
+      clearInterval(timerRef.current);
+    }
     setRunning((r) => !r);
   };
 
   const handleReset = () => {
     clearInterval(timerRef.current);
     setRunning(false);
-    setSeconds(initialSessionDuration); // Reset to 25 minutes
+    setSessionType("focus");
+    setSeconds(initialFocusDuration);
+    startTimeRef.current = null;
   };
 
-  // Calculate progress for the circular bar
-  const progress = (seconds / initialSessionDuration) * 100;
+  const toggleSessionType = (type) => {
+    if (running) return;
+    clearInterval(timerRef.current);
+    setRunning(false);
+    setSessionType(type);
+    setSeconds(type === "focus" ? initialFocusDuration : initialBreakDuration);
+    startTimeRef.current = null;
+  };
+
+  const handleSessionEnd = async () => {
+    if (sessionType === "focus") {
+      const endTime = new Date().toISOString();
+      const durationInMinutes = Math.floor(initialFocusDuration / 60);
+
+      if (uid && startTimeRef.current) {
+        try {
+          const response = await fetch(`/api/user/${uid}/sessions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: `Focus Session ${sessionCount}`,
+              startTime: startTimeRef.current,
+              endTime: endTime,
+              focusedMinutes: durationInMinutes,
+              status: "completed",
+              type: "focus",
+              createdAt: new Date().toISOString(),
+            }),
+          });
+
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const savedSession = await response.json();
+          console.log("Session saved:", savedSession);
+        } catch (err) {
+          console.error("Error saving session:", err);
+          alert(`Error saving focus session: ${err.message}`);
+        }
+      }
+
+      alert(`Focus Session ${sessionCount} completed! Time for a ${breakDuration}-minute break.`);
+      setSessionType("break");
+      setSeconds(initialBreakDuration);
+      setRunning(autoStartBreaks); // ✅ Use user’s setting for auto-start
+      startTimeRef.current = new Date().toISOString();
+    } else {
+      alert("Break over! Ready for another focus session?");
+      setSessionType("focus");
+      setSeconds(initialFocusDuration);
+      setSessionCount((prev) => prev + 1);
+      setRunning(false);
+      startTimeRef.current = null;
+    }
+  };
+
+  // Circular progress bar setup
+  const totalDuration = sessionType === "focus" ? initialFocusDuration : initialBreakDuration;
+  const progress = (seconds / totalDuration) * 100;
   const radius = 90;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
+  const strokeDashoffset = totalDuration > 0
+    ? circumference - (progress / 100) * circumference
+    : circumference;
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        // Remove background, border-radius, box-shadow from here
-        padding: "30px 20px", // Keep internal padding
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", marginBottom: "30px" }}>
+    <div className="focus-session-container">
+      <div className="session-type-selector">
         <button
-          style={{
-            padding: "8px 16px",
-            marginRight: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
+          className={`session-type-button ${sessionType === "focus" ? "active" : ""}`}
+          onClick={() => toggleSessionType("focus")}
+          disabled={running}
         >
-          Focus Session
+          Focus
         </button>
-        <span style={{ fontSize: "18px", color: "#555" }}>Session {sessionCount}</span>
+        <button
+          className={`session-type-button ${sessionType === "break" ? "active" : ""}`}
+          onClick={() => toggleSessionType("break")}
+          disabled={running}
+        >
+          Break
+        </button>
       </div>
 
-      <div
-        style={{
-          position: "relative",
-          width: "300px",
-          height: "300px",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: "30px",
-        }}
-      >
-        <svg
-          width="300"
-          height="300"
-          viewBox="0 0 200 200"
-          style={{ position: "absolute", top: 0, left: 0 }}
-        >
+      <div className="session-info">
+        <span className="session-label">
+          Current: {sessionType === "focus" ? `Focus Session ${sessionCount}` : "Break"}
+        </span>
+      </div>
+
+      <div className="timer-display-wrapper">
+        <svg width="300" height="300" viewBox="0 0 200 200" className="timer-svg">
+          <circle className="timer-circle-background" r={radius} cx="100" cy="100" />
           <circle
-            stroke="#eee"
-            fill="transparent"
-            strokeWidth="8"
-            r={radius}
-            cx="100"
-            cy="100"
-          />
-          <circle
-            stroke="#007bff"
-            fill="transparent"
-            strokeWidth="8"
-            strokeLinecap="round"
+            className={`timer-circle-progress ${sessionType === "focus" ? "focus-color" : "break-color"}`}
             r={radius}
             cx="100"
             cy="100"
             style={{
-              transition: "stroke-dashoffset 1s linear",
-              transform: "rotate(-90deg)",
-              transformOrigin: "50% 50%",
               strokeDasharray: circumference,
               strokeDashoffset: strokeDashoffset,
             }}
           />
         </svg>
-        <div style={{ fontSize: "70px", fontWeight: "bold", color: "#333", lineHeight: 1 }}>
-          {format(seconds)}
-        </div>
-        <p style={{ fontSize: "18px", color: "#666", marginTop: "5px" }}>Stay focused!</p>
+        <div className="timer-text">{formatTime(seconds)}</div>
+        <p className="timer-slogan">
+          {sessionType === "focus" ? "Stay focused!" : "Time to recharge!"}
+        </p>
       </div>
 
-      <div style={{ display: "flex", gap: "15px" }}>
+      <div className="timer-controls">
         <button
           onClick={handleStartStop}
-          style={{
-            padding: "12px 28px",
-            backgroundColor: running ? "#dc3545" : "#28a745",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontSize: "18px",
-            fontWeight: "bold",
-            transition: "background-color 0.2s ease",
-            minWidth: "120px"
-          }}
+          className={`timer-button ${running ? "stop-button" : "start-button"}`}
         >
           {running ? "Stop" : "Start"}
         </button>
-        <button
-          onClick={handleReset}
-          style={{
-            padding: "12px 28px",
-            backgroundColor: "#6c757d",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontSize: "18px",
-            fontWeight: "bold",
-            transition: "background-color 0.2s ease",
-            minWidth: "120px"
-          }}
-        >
+        <button onClick={handleReset} className="timer-button reset-button">
           Reset
         </button>
       </div>

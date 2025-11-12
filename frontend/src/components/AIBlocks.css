@@ -1,0 +1,71 @@
+/* src/components/AIBlocks.css */
+
+.ai-blocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 16px;
+    padding: 8px; /* Consider if padding should be handled by parent */
+    /* background-color: #f8f8f8; */ /* Parent should define background */
+    margin-top: 20px; /* Space from previous section */
+}
+
+.ai-block-card {
+    background-color: var(--card-background-color, white); /* Use CSS variables for theming */
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--card-shadow, 0 2px 4px rgba(0,0,0,0.05));
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes button to bottom */
+}
+
+.ai-block-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.ai-block-icon {
+    width: 32px; /* Slightly larger icons */
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary-light-color, #e6f7ff); /* Light blue background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 12px;
+    font-size: 18px; /* Larger icon font size */
+    color: var(--primary-color, #1890ff);
+}
+
+.ai-block-title {
+    margin: 0;
+    font-size: 19px; /* Slightly larger title */
+    color: var(--text-color-primary, #333);
+    font-weight: 600;
+}
+
+.ai-block-description {
+    font-size: 15px;
+    color: var(--text-color-secondary, #666);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1; /* Allows description to take available space */
+}
+
+.ai-block-button {
+    background: none;
+    border: none;
+    color: var(--link-color, #1890ff);
+    font-size: 15px;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    align-self: flex-start; /* Aligns button to the left */
+    transition: color 0.2s ease;
+}
+
+.ai-block-button:hover {
+    color: var(--link-hover-color, #40a9ff);
+}

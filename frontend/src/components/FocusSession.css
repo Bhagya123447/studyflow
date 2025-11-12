@@ -1,0 +1,155 @@
+/* src/components/FocusSession.css */
+
+.focus-session-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--card-background-color, white);
+    border-radius: 15px;
+    box-shadow: var(--card-shadow, 0 4px 10px rgba(0,0,0,0.08));
+    padding: 30px 20px;
+    margin-top: 25px;
+    min-width: 350px; /* Ensure a minimum width */
+}
+
+.session-type-selector {
+    display: flex;
+    margin-bottom: 25px;
+    background-color: var(--secondary-background-color, #e0e0e0);
+    border-radius: 10px;
+    overflow: hidden; /* Ensures active button border doesn't stick out */
+}
+
+.session-type-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: transparent;
+    color: var(--text-color-secondary, #666);
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: 10px; /* Match container border-radius */
+    outline: none; /* Remove focus outline */
+}
+
+.session-type-button.active {
+    background-color: var(--primary-color, #1890ff);
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow for active button */
+}
+
+.session-type-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.session-info {
+    margin-bottom: 25px;
+}
+
+.session-label {
+    font-size: 1.2em;
+    color: var(--text-color-primary, #333);
+    font-weight: 600;
+}
+
+.timer-display-wrapper {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.timer-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg); /* Rotate for correct progress bar start */
+    transform-origin: 50% 50%;
+}
+
+.timer-circle-background {
+    stroke: var(--border-color-light, #eee);
+    fill: transparent;
+    stroke-width: 8;
+}
+
+.timer-circle-progress {
+    fill: transparent;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear; /* Smooth transition for progress */
+}
+
+.timer-circle-progress.focus-color {
+    stroke: var(--primary-color, #1890ff); /* Blue for focus */
+}
+
+.timer-circle-progress.break-color {
+    stroke: var(--accent-color-green, #28a745); /* Green for break */
+}
+
+
+.timer-text {
+    font-size: 4em; /* Larger time display */
+    font-weight: 700;
+    color: var(--text-color-primary, #333);
+    line-height: 1;
+}
+
+.timer-slogan {
+    font-size: 1.1em;
+    color: var(--text-color-secondary, #666);
+    margin-top: 10px;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 20px; /* Increased gap between buttons */
+}
+
+.timer-button {
+    padding: 14px 30px; /* Larger buttons */
+    border: none;
+    border-radius: 10px; /* More rounded buttons */
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    min-width: 140px; /* Ensure consistent button width */
+}
+
+.timer-button.start-button {
+    background-color: var(--accent-color-green, #28a745); /* Green start button */
+    color: white;
+}
+
+.timer-button.start-button:hover {
+    background-color: var(--accent-color-green-dark, #218838);
+    transform: translateY(-2px);
+}
+
+.timer-button.stop-button {
+    background-color: var(--error-color, #dc3545); /* Red stop button */
+    color: white;
+}
+
+.timer-button.stop-button:hover {
+    background-color: var(--error-color-dark, #c82333);
+    transform: translateY(-2px);
+}
+
+.timer-button.reset-button {
+    background-color: var(--button-secondary-background, #6c757d); /* Grey reset button */
+    color: white;
+}
+
+.timer-button.reset-button:hover {
+    background-color: var(--button-secondary-hover, #5a6268);
+    transform: translateY(-2px);
+}
