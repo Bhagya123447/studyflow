@@ -166,7 +166,7 @@ Licensed under the **MIT License** — free to use and modify.
 
 ## 📬 **Contact**
 
-🔗 **Connect with me on [LinkedIn](https://www.linkedin.com/in/aksh2758/)**  
+🔗 **Connect with me on [LinkedIn](https://www.linkedin.com/in/bhagya-sorapur-913542310/)**  
 💬 *Let’s build smarter learning together!*
 
 
